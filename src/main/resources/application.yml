@@ -1,0 +1,3 @@
+welcome.message: bonjour chien de la casse
+
+spring.thymeleaf.cache: false

@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>LE WHIST</title>
+
+    <link rel="stylesheet" th:href="@{webjars/bootstrap/4.2.1/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+
+</head>
+
+<body>
+
+<main role="main" class="container">
+
+    <div class="starter-template">
+        <h2>
+            <span th:text="'Hello, ' + ${username}"></span>
+        </h2>
+    </div>
+
+    <div th:if="${whist.trump}">
+        ATOUT : <img th:src="@{/img/cards/{cardPng}(cardPng=${whist.trump.getAssetName()})}" class="playing-card-img"/>
+    </div>
+
+    <table>
+        <tr>
+            <th>Joueur</th>
+            <th>Contrat</th>
+            <th>Plis</th>
+            <th>Main</th>
+        </tr>
+
+        <tr th:each="player: ${whist.getPlayersPlaying()}">
+            <td th:text="${player.getName()}"></td>
+
+            <td>
+                <div th:if="${whist.getNextToTalkOrPlay()} == ${username} and ${player.getName()} == ${username}">
+                    <form method="POST" action="/contract">
+                        <input type="text" name="value" />
+                        <input type="submit" />
+                    </form>
+                </div>
+            </td>
+
+            <td>
+
+            </td>
+
+            <td>
+                <span th:each="card: ${player.getCards()}" >
+                    <img th:if="${player.getName()} == ${username}" th:src="@{/img/cards/{cardPng}(cardPng=${card.getAssetName()})}" class="playing-card-img"/>
+                    <img th:if="${player.getName()} != ${username}" th:src="@{/img/cards/back.png}" class="playing-card-img"/>
+                </span>
+            </td>
+        </tr>
+    </table>
+
+
+</main>
+<!-- /.container -->
+
+<script type="text/javascript" th:src="@{webjars/bootstrap/4.2.1/js/bootstrap.min.js}"></script>
+</body>
+</html>
