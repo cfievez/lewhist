@@ -1,0 +1,9 @@
+<h2 mat-dialog-title>JOKER</h2>
+<mat-dialog-content class="mat-typography" style="text-align: center;">
+  <img src="assets/{{ data.card.value }}.png"  alt="{{ data.card.value }}" class="card" style="width: 5rem;" />
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Annuler</button>
+  <button mat-button (click)="big()">Grande</button>
+  <button mat-button (click)="small()">Petite</button>
+</mat-dialog-actions>

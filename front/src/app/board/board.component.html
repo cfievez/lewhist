@@ -1,0 +1,83 @@
+<ul>
+  <li *ngFor="let player of whist.waitingPlayers">
+    {{ player }}
+  </li>
+</ul>
+
+<ng-container *ngIf="whist.trumpCard">
+  Atout : <img src="assets/{{ whist.trumpCard }}.png"  alt="atout" class="card" />
+</ng-container>
+
+<table>
+  <tr>
+    <th>Nom</th>
+    <th>Contrat</th>
+    <th>Score</th>
+    <th>Main</th>
+    <th>Joué</th>
+    <th></th>
+  </tr>
+  <tr *ngFor="let player of whist.players">
+    <td>
+      {{ player.username }}
+      <ng-container *ngIf="whist.hasToPickAWinner && player.score != player.contract">
+        <br/><button mat-raised-button (click)="pickAWinner(player.username)">Distribuer</button>
+      </ng-container>
+    </td>
+    <td>
+      <ng-container *ngIf="player.isNextToTalk">
+        <ng-container *ngIf="player.isConnectedPlayer">
+          <div style="text-align: center">
+            <mat-form-field appearance="fill">
+              <input type="number" matInput  [(ngModel)]="contract" required>
+            </mat-form-field>
+          </div>
+          <div style="text-align: center">
+            <button mat-raised-button (click)="talk(contract)">Parler</button>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="!player.isConnectedPlayer">
+          On attend...
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="!player.isNextToTalk">
+        {{ player.contract }}
+      </ng-container>
+    </td>
+    <td>
+      {{ player.score }}
+    </td>
+    <td>
+      <ng-container *ngFor="let card of player.cards">
+        <ng-container *ngIf="player.isNextToPlay && player.isConnectedPlayer">
+          <img src="assets/{{ card.value }}.png"
+               alt="{{ card.value }}"
+               class="card"
+               (click)="play(card)"
+               style="cursor: pointer"
+          />
+        </ng-container>
+        <ng-container *ngIf="!player.isNextToPlay || !player.isConnectedPlayer">
+          <img src="assets/{{ card.value }}.png"  alt="{{ card.value }}" class="card" />
+        </ng-container>
+      </ng-container>
+    </td>
+    <td>
+      <img *ngIf="player.cardPlayed as card" src="assets/{{ card }}.png"  alt="{{ card }}" class="card" />
+      <ng-container *ngIf="player.bonusUsed == 'DISTRIBUTION'">
+        <p>Je distribue</p>
+      </ng-container>
+      <ng-container *ngIf="player.bonusUsed == 'TAKE'">
+        <p>Je prends</p>
+      </ng-container>
+      <ng-container *ngIf="player.bonusUsed == 'LEAVE'">
+        <p>Je laisse</p>
+      </ng-container>
+    </td>
+    <td>
+      <ng-container *ngIf="player.hasToPickAWinner">
+        On attend...
+      </ng-container>
+    </td>
+  </tr>
+</table>

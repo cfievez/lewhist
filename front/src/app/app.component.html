@@ -1,0 +1,33 @@
+<ng-container *ngIf="(game$ | async) as game; else loading">
+
+  <ng-container *ngIf="!isAuthenticated">
+    <div style="text-align: center">
+      <mat-form-field appearance="fill" [floatLabel]="true">
+        <mat-label>Ton nom</mat-label>
+        <input type="text" matInput  [(ngModel)]="usernameInput" required>
+      </mat-form-field>
+    </div>
+    <div style="text-align: center">
+      <button mat-raised-button (click)="connexion(usernameInput)">Connexion</button>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="isSpectating">
+    <div style="text-align: center">
+      <button mat-raised-button (click)="join()">Rejoindre</button>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="isWaiting && !game.whist.trumpCard">
+    <div style="text-align: center">
+      <button mat-raised-button (click)="start()">Commencer</button>
+    </div>
+  </ng-container>
+
+  <app-board [whist]="game.whist" (action)="action($event)"></app-board>
+
+</ng-container>
+
+<ng-template #loading>
+  <mat-spinner mode="indeterminate"></mat-spinner>
+</ng-template>
