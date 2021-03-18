@@ -18,6 +18,8 @@ public class Whist {
 	private Card trump;
 
 	private GamePhase phase = GamePhase.WAITING;
+	private Player firstToPlayCurrentTrick;
+	private int dealerIndex = -1;
 	private int talkerIndex;
 	private int handSize;
 	private boolean trumpPlayed;
@@ -28,11 +30,14 @@ public class Whist {
 	}
 
 	public void initGame(int handSize) {
+		logger.info("Start new game with hand size of {}", handSize);
 		playersPlaying.addAll(playersWaiting);
 		playersWaiting.clear();
 		tricks = new ArrayList<>();
 		phase = GamePhase.TALK;
-		talkerIndex = 0;
+		dealerIndex = (dealerIndex + 1) % playersPlaying.size();
+		talkerIndex = dealerIndex;
+		firstToPlayCurrentTrick = playersPlaying.get(talkerIndex);
 		trumpPlayed = false;
 		this.handSize = handSize;
 		generateDeck();
@@ -57,6 +62,7 @@ public class Whist {
 		for (Player player : playersPlaying) {
 			player.emptyHand();
 			player.cancelContract();
+			player.resetScore();
 		}
 	}
 
@@ -223,11 +229,7 @@ public class Whist {
 	}
 
 	private void triggerWaitingForNextTrickPhase() {
-		if(!atLeastOnePlayerHasCardInHand()) {
-			phase = GamePhase.WAITING_FOR_NEXT_GAME;
-		} else {
-			phase = GamePhase.WAITING_FOR_NEXT_TRICK;
-		}
+		phase = GamePhase.WAITING_FOR_NEXT_TRICK;
 	}
 
 	private boolean atLeastOnePlayerHasCardInHand() {
@@ -261,13 +263,22 @@ public class Whist {
 		}
 	}
 
-	private void triggerNextTrickWithWinner(int winner) {
-		playersPlaying.get(winner).increaseScore();
-		logger.info("{} wins this trick", playersPlaying.get(winner).getName());
-		talkerIndex = winner;
+	private void triggerNextTrickWithWinner(int winnerIndex) {
+		Player winner = playersPlaying.get(winnerIndex);
+
+		winner.increaseScore();
+		talkerIndex = winnerIndex;
 		tricks.add(new Trick(trump, trumpPlayed, playersPlaying.size()));
 		playersPlaying.forEach(Player::resetCardPlayed);
+		firstToPlayCurrentTrick = winner;
 		phase = GamePhase.PLAY;
+
+		logger.info("{} wins this trick", winner.getName());
+
+		if(!atLeastOnePlayerHasCardInHand()) {
+			logger.info("Game is over, waiting for next game");
+			phase = GamePhase.WAITING_FOR_NEXT_GAME;
+		}
 	}
 
 	private int getWinnerIndex(TrickResult trickResult) {
@@ -325,6 +336,10 @@ public class Whist {
 
 	public boolean gameIsOver() {
 		return phase.equals(GamePhase.WAITING_FOR_NEXT_GAME);
+	}
+
+	public boolean playerIsFirstToPlayCurrentTrick(String playerName) {
+		return firstToPlayCurrentTrick != null && firstToPlayCurrentTrick.getName().equals(playerName);
 	}
 
 	public enum GamePhase {

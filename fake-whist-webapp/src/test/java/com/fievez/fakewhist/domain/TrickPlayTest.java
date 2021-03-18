@@ -123,6 +123,17 @@ class TrickPlayTest {
 		assertThrows(Exception.class, () -> trick.play(new Card(Card.Suit.JOKER, 0), generateHandWithJoker()));
 	}
 
+	@Test
+	void canPlayTwoWithoutTalkingIfCut() throws Exception {
+		Trick trick = new Trick(new Card(Card.Suit.CLUB, 9), true, 3);
+
+		trick.play(new Card(Card.Suit.HEART, 5), generateHandWithJoker());
+		trick.play(new Card(Card.Suit.HEART, 14), generateHandWithJoker());
+		trick.play(new Card(Card.Suit.CLUB, 2), generateHandFullOfClub());
+
+		assertTrue(true);
+	}
+
 	private List<Card> generateHandWithoutJoker() {
 		List<Card> hand = new ArrayList<>();
 		hand.add(new Card(Card.Suit.DIAMOND, 8));

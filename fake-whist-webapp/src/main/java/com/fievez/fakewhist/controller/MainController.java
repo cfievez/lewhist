@@ -32,9 +32,14 @@ public class MainController {
 		this.websocketTemplate = websocketTemplate;
 	}
 
-	private void sendMessageToWebsocket(String message) {
+	private void sendWebsocketMessageAndRefreshView(String message) {
 		String socketPath = "/topic/whist";
 		websocketTemplate.convertAndSend(socketPath, message);
+		refreshViewByWebSocket();
+	}
+
+	private void refreshViewByWebSocket() {
+		String socketPath = "/topic/whist";
 		websocketTemplate.convertAndSend(socketPath, "refresh");
 	}
 
@@ -81,19 +86,22 @@ public class MainController {
 	@PostMapping("/start")
 	public void main(HttpServletRequest request) throws Exception {
 		getConnectedUsernameOrThrowException(request);
-		globalSession.whist.initGame(13);
+		globalSession.whist.initGame(4);
+		refreshViewByWebSocket();
 	}
 
 	@PostMapping("/join")
 	public void joinGame(HttpServletRequest request) throws Exception {
-		globalSession.whist.addPlayer(getConnectedUsernameOrThrowException(request));
+		String username = getConnectedUsernameOrThrowException(request);
+		globalSession.whist.addPlayer(username);
+		sendWebsocketMessageAndRefreshView(username + " est arrivé");
 	}
 
 	@PostMapping("/contract")
 	public void setContract(HttpServletRequest request, @RequestParam int value) throws Exception {
 		String username = getConnectedUsernameOrThrowException(request);
 		globalSession.whist.talkContract(username, value);
-		sendMessageToWebsocket(username + " said " + value);
+		refreshViewByWebSocket();
 	}
 
 	@PostMapping("/play")
@@ -105,10 +113,10 @@ public class MainController {
 		} else {
 			globalSession.whist.playCard(username, Card.fromString(card));
 		}
-		sendMessageToWebsocket(username + " played " + card + (bonus != null ? " + " + bonus.toString() : ""));
+		refreshViewByWebSocket();
 
 		if(globalSession.whist.isWaitingForNextTrick()) {
-			sendMessageToWebsocket("Fin du pli");
+			refreshViewByWebSocket();
 			triggerNextTrickAfterADelay();
 		}
 	}
@@ -117,9 +125,10 @@ public class MainController {
 	public void distribute(HttpServletRequest request, @RequestParam String targetedPlayer) throws Exception {
 		String username = getConnectedUsernameOrThrowException(request);
 		globalSession.whist.pickPlayerToDistributeTo(username, targetedPlayer);
+		sendWebsocketMessageAndRefreshView(username + " distribue à " + targetedPlayer);
 
 		if(globalSession.whist.isWaitingForNextTrick()) {
-			sendMessageToWebsocket("Fin du pli");
+			refreshViewByWebSocket();
 			triggerNextTrickAfterADelay();
 		}
 	}
@@ -155,7 +164,10 @@ public class MainController {
 			public void run() {
 				try {
 					globalSession.whist.triggerNextTrick();
-					sendMessageToWebsocket("Début du pli");
+					if(globalSession.whist.gameIsOver()) {
+						triggerNextGameAfterADelay();
+					}
+					refreshViewByWebSocket();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -163,6 +175,24 @@ public class MainController {
 		};
 
 		timer.schedule(task, 3000);
+	}
+
+	private void triggerNextGameAfterADelay() {
+		final Timer timer = new Timer();
+
+		final TimerTask task = new TimerTask() {
+			@Override
+			public void run() {
+				try {
+					globalSession.whist.initGame(3);
+					refreshViewByWebSocket();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		};
+
+		timer.schedule(task, 15000);
 	}
 
 }

@@ -23,7 +23,13 @@ public class Trick {
 		if(cards.size() == numberOfPlayers) {
 			throw new Exception("Ce pli est fini, faut pas rejouer là...");
 		}
-		if((card.getValue() == 2 || card.getSuit().equals(Card.Suit.JOKER)) && !card.hasBonus()) {
+		if(!card.hasBonus() && card.getValue() == 2) {
+			Optional<Card.Suit> suitAskedFor = suitAskedFor();
+			if(!suitAskedFor.isPresent() || suitAskedFor.get().equals(card.getSuit())) {
+				throw new Exception("Obligatoire de parler lorsqu'on utilise un deux");
+			}
+		}
+		if(!card.hasBonus() && card.getSuit().equals(Card.Suit.JOKER)) {
 			throw new Exception("Obligatoire de parler lorsqu'on utilise une carte bonus");
 		}
 

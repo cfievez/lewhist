@@ -28,6 +28,8 @@ public class PlayerView {
 
 	public boolean isConnectedPlayer;
 
+	public boolean isFirstToPlayThisTrick;
+
 	public static PlayerView from(com.fievez.fakewhist.domain.Player player, Whist whist, String connectedUserName) {
 		PlayerView playerView = new PlayerView();
 		playerView.username = player.getName();
@@ -70,6 +72,7 @@ public class PlayerView {
 				&& whist.getNextToTalkOrPlay().getName().equals(player.getName());
 		playerView.hasToPickAWinner = player.hasToPickAWinner();
 		playerView.isConnectedPlayer = connectedUserName.equals(player.getName());
+		playerView.isFirstToPlayThisTrick = whist.playerIsFirstToPlayCurrentTrick(player.getName());
 		return playerView;
 	}
 
