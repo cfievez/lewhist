@@ -47,7 +47,7 @@ export class BoardComponent implements OnInit {
 
   play(card: CardApiDto) {
     if(card.bonusTwo) {
-        const dialogRef = this.dialog.open(TwoCardDialog, { data: { card: card} } );
+        const dialogRef = this.dialog.open(TwoCardDialog, { data: { card: card.value } as DialogDataCard } );
 
         dialogRef.afterClosed().subscribe(result => {
           if(result == "distribution") {
@@ -57,7 +57,7 @@ export class BoardComponent implements OnInit {
           }
         });
     } else if(card.bonusJoker) {
-      const dialogRef = this.dialog.open(JokerCardDialog, { data: { card: card} } );
+      const dialogRef = this.dialog.open(JokerCardDialog, { data: { card: card.value } as DialogDataCard } );
 
       dialogRef.afterClosed().subscribe(result => {
         if(result == "small") {
