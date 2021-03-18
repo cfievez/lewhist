@@ -22,4 +22,6 @@ export interface PlayerApiDto {
 
   isConnectedPlayer: boolean;
 
+  isFirstToPlayThisTrick: boolean;
+
 }

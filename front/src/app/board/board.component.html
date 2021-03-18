@@ -18,13 +18,13 @@
     <th></th>
   </tr>
   <tr *ngFor="let player of whist.players">
-    <td>
+    <td [class.previousWinner]="player.isFirstToPlayThisTrick">
       {{ player.username }}
       <ng-container *ngIf="whist.hasToPickAWinner && player.score != player.contract">
         <br/><button mat-raised-button (click)="pickAWinner(player.username)">Distribuer</button>
       </ng-container>
     </td>
-    <td>
+    <td [class.gameWinner]="whist.gameIsOver && player.contract == player.score" [class.gameLoser]="whist.gameIsOver && player.contract != player.score">
       <ng-container *ngIf="player.isNextToTalk">
         <ng-container *ngIf="player.isConnectedPlayer">
           <div style="text-align: center">
@@ -44,7 +44,7 @@
         {{ player.contract }}
       </ng-container>
     </td>
-    <td>
+    <td [class.gameWinner]="whist.gameIsOver && player.contract == player.score" [class.gameLoser]="whist.gameIsOver && player.contract != player.score">
       {{ player.score }}
     </td>
     <td>
