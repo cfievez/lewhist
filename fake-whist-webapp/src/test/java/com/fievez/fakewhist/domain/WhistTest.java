@@ -2,6 +2,9 @@ package com.fievez.fakewhist.domain;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -82,16 +85,6 @@ class WhistTest {
 	}
 
 	@Test
-	void canPlayIfYourTurn() throws Exception {
-		Whist whist = getWhistInPlayingPhase(6);
-
-		Card card = getACardFromPlayer(whist, "playerA");
-		whist.playCard("playerA", card);
-
-		assertTrue(true);
-	}
-
-	@Test
 	void cantPlayIfNotYourTurn() throws Exception {
 		Whist whist = getWhistInPlayingPhase(6);
 
@@ -99,12 +92,6 @@ class WhistTest {
 			whist.playCard("playerB", new Card(Card.Suit.CLUB, 8));
 		});
 
-	}
-
-	private Card getACardFromPlayer(Whist whist, String playerName) {
-		Player playerA = getPlayer(whist, playerName);
-
-		return playerA.getCards().stream().findAny().get();
 	}
 
 	private Whist initWhist(int handSize) {
@@ -126,13 +113,6 @@ class WhistTest {
 		whist.talkContract("playerD", 2);
 
 		return whist;
-	}
-
-	private Player getPlayer(Whist whist, String playerName) {
-		return whist.getPlayersPlaying().stream()
-				.filter(player -> player.getName().equals(playerName))
-				.findFirst()
-				.get();
 	}
 
 }
