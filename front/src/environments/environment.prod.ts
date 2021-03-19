@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiHost: new URL(window.location.href).host
+  webSocketURL: 'wss://' +  new URL(window.location.href).host + '/socket/websocket'
 };
