@@ -11,9 +11,10 @@ import java.util.stream.Collectors;
 
 public class Whist {
 
-	private final List<Player> playersPlaying = new ArrayList<>();
+	private List<Player> playersPlaying = new ArrayList<>();
 	Logger logger = LoggerFactory.getLogger(Whist.class);
 	private List<Player> playersWaiting = new ArrayList<>();
+	private List<Player> playersLeaving = new ArrayList<>();
 	private List<Card> deck;
 	private Card trump;
 
@@ -31,6 +32,7 @@ public class Whist {
 
 	public void initGame(int handSize) {
 		logger.info("Start new game with hand size of {}", handSize);
+		removeLeavingPlayers();
 		playersPlaying.addAll(playersWaiting);
 		playersWaiting.clear();
 		tricks = new ArrayList<>();
@@ -98,10 +100,18 @@ public class Whist {
 				&& playersWaiting.stream().noneMatch(player -> player.getName().equals(playerName));
 	}
 
-	public void removePlayer(String playerName) {
+	public void playerWantsToLeave(Player leavingPlayer) {
+		playersLeaving.add(leavingPlayer);
 		playersWaiting = playersWaiting.stream()
-				.filter(player -> !player.getName().equals(playerName))
+				.filter(player -> !player.equals(leavingPlayer))
 				.collect(Collectors.toList());
+	}
+
+	public void removeLeavingPlayers() {
+		playersPlaying = playersPlaying.stream()
+				.filter(player -> !playersLeaving.contains(player))
+				.collect(Collectors.toList());
+		playersLeaving.clear();
 	}
 
 	public List<Player> getPlayersWaiting() {

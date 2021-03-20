@@ -20,6 +20,10 @@ export class ApiService {
     return this.http.post(`rest/join`, null);
   }
 
+  public leave(): Observable<any> {
+    return this.http.post(`rest/leave`, null);
+  }
+
   public start(): Observable<any> {
     return this.http.post(`rest/start`, null);
   }
@@ -43,6 +47,5 @@ export class ApiService {
   public giveTrickToPlayer(targetedPlayer: string): Observable<any> {
     return this.http.post(`rest/distribute?targetedPlayer=${targetedPlayer}`, null);
   }
-
 }
 

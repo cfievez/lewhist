@@ -4,6 +4,7 @@ import com.fievez.fakewhist.GlobalSession;
 import com.fievez.fakewhist.controller.dto.GameView;
 import com.fievez.fakewhist.controller.dto.WhistView;
 import com.fievez.fakewhist.domain.Card;
+import com.fievez.fakewhist.domain.Player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.core.MessageSendingOperations;
@@ -12,16 +13,15 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 @RestController
 @RequestMapping("/rest")
 public class MainController {
 
 	private final static Logger logger = LoggerFactory.getLogger(MainController.class);
+	public static final int MAX_HAND_SIZE = 9;
+	public static final int MIN_HAND_SIZE = 4;
 
 	private final GlobalSession globalSession;
 
@@ -86,7 +86,7 @@ public class MainController {
 	@PostMapping("/start")
 	public void main(HttpServletRequest request) throws Exception {
 		getConnectedUsernameOrThrowException(request);
-		globalSession.whist.initGame(4);
+		globalSession.whist.initGame(MIN_HAND_SIZE);
 		refreshViewByWebSocket();
 	}
 
@@ -95,6 +95,12 @@ public class MainController {
 		String username = getConnectedUsernameOrThrowException(request);
 		globalSession.whist.addPlayer(username);
 		sendWebsocketMessageAndRefreshView(username + " est arrivé");
+	}
+
+	@PostMapping("/leave")
+	public void leaveGame(HttpServletRequest request) throws Exception {
+		String username = getConnectedUsernameOrThrowException(request);
+		globalSession.whist.playerWantsToLeave(new Player(username));
 	}
 
 	@PostMapping("/contract")
@@ -184,7 +190,7 @@ public class MainController {
 			@Override
 			public void run() {
 				try {
-					globalSession.whist.initGame(3);
+					globalSession.whist.initGame(generateRandomHandSize());
 					refreshViewByWebSocket();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -192,7 +198,12 @@ public class MainController {
 			}
 		};
 
-		timer.schedule(task, 15000);
+		timer.schedule(task, 8000);
+	}
+
+	private int generateRandomHandSize() {
+		Random r = new Random();
+		return r.nextInt(MAX_HAND_SIZE - MIN_HAND_SIZE) + MIN_HAND_SIZE;
 	}
 
 }

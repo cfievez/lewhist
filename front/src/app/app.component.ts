@@ -25,6 +25,8 @@ export class AppComponent implements OnInit {
 
   public isWaiting: boolean = false;
 
+  public isPlaying: boolean = false;
+
   constructor(private api: ApiService, private rxStompService: RxStompService, private _snackBar: MatSnackBar) {
   }
 
@@ -48,6 +50,7 @@ export class AppComponent implements OnInit {
       this.isAuthenticated = gameView.status != 'UNAUTHENTICATED';
       this.isSpectating = gameView.status == 'SPECTATING';
       this.isWaiting = gameView.status == 'WAITING_TO_PLAY';
+      this.isPlaying = gameView.status == 'PLAYING';
     });
   }
 
@@ -69,6 +72,12 @@ export class AppComponent implements OnInit {
     })
   }
 
+  leave() {
+    this.api.leave().subscribe(() => {
+      this.loadWhist();
+    })
+  }
+
   action($boardAction: BoardAction) {
     let apiCall: Observable<any>;
     if($boardAction.type == 'TALK') {
@@ -85,5 +94,9 @@ export class AppComponent implements OnInit {
     apiCall.subscribe(() => {
       this.loadWhist();
     });
+  }
+
+  get canLeave():boolean {
+    return this.isPlaying || this.isWaiting;
   }
 }

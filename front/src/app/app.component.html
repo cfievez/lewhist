@@ -24,6 +24,12 @@
     </div>
   </ng-container>
 
+  <ng-container *ngIf="canLeave">
+    <div style="text-align: center">
+      <button mat-raised-button (click)="leave()">Quitter</button>
+    </div>
+  </ng-container>
+
   <app-board [whist]="game.whist" (action)="action($event)"></app-board>
 
 </ng-container>
