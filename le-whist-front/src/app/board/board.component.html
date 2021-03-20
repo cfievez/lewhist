@@ -4,66 +4,39 @@
   </li>
 </ul>
 
+
 <ng-container *ngIf="whist.trumpCard">
-  Atout : <img src="assets/{{ whist.trumpCard }}.png"  alt="atout" class="card" />
+  <div style="text-align: center">Atout<br/><img src="assets/{{ whist.trumpCard }}.png"  alt="atout" class="card" /></div>
 </ng-container>
 
-<table>
+
+<table class="otherPlayers">
   <tr>
-    <th>Nom</th>
-    <th>Contrat</th>
-    <th>Score</th>
-    <th>Main</th>
-    <th>Joué</th>
-    <th></th>
+    <td *ngFor="let player of whist.players">
+      <ng-container *ngIf="whist.gameIsOver && player.contract == player.score">😎</ng-container>
+      <ng-container *ngIf="whist.gameIsOver && player.contract != player.score">😭</ng-container>
+      <ng-container *ngIf="!whist.gameIsOver"><img src="assets/chip.png" *ngIf="player.isFirstToPlayThisTrick" alt=""/></ng-container>
   </tr>
-  <tr *ngFor="let player of whist.players">
-    <td [class.previousWinner]="player.isFirstToPlayThisTrick">
-      {{ player.username }}
+  <tr>
+    <td *ngFor="let player of whist.players">
+      <div>{{ player.username }}</div>
+      <div>({{ player.score }} / {{ player.contract != null ? player.contract : '?' }})</div>
+    </td>
+  </tr>
+  <tr>
+    <td *ngFor="let player of whist.players">
       <ng-container *ngIf="whist.hasToPickAWinner && player.score != player.contract">
         <br/><button mat-raised-button (click)="pickAWinner(player.username)">Distribuer</button>
       </ng-container>
     </td>
-    <td [class.gameWinner]="whist.gameIsOver && player.contract == player.score" [class.gameLoser]="whist.gameIsOver && player.contract != player.score">
-      <ng-container *ngIf="player.isNextToTalk">
-        <ng-container *ngIf="player.isConnectedPlayer">
-          <div style="text-align: center">
-            <mat-form-field appearance="fill">
-              <input type="number" matInput  [(ngModel)]="contract" required>
-            </mat-form-field>
-          </div>
-          <div style="text-align: center">
-            <button mat-raised-button (click)="talk(contract)">Parler</button>
-          </div>
-        </ng-container>
-        <ng-container *ngIf="!player.isConnectedPlayer">
-          On attend...
-        </ng-container>
-      </ng-container>
-      <ng-container *ngIf="!player.isNextToTalk">
-        {{ player.contract }}
-      </ng-container>
-    </td>
-    <td [class.gameWinner]="whist.gameIsOver && player.contract == player.score" [class.gameLoser]="whist.gameIsOver && player.contract != player.score">
-      {{ player.score }}
-    </td>
-    <td>
-      <ng-container *ngFor="let card of player.cards">
-        <ng-container *ngIf="player.isNextToPlay && player.isConnectedPlayer">
-          <img src="assets/{{ card.value }}.png"
-               alt="{{ card.value }}"
-               class="card"
-               (click)="play(card)"
-               style="cursor: pointer"
-          />
-        </ng-container>
-        <ng-container *ngIf="!player.isNextToPlay || !player.isConnectedPlayer">
-          <img src="assets/{{ card.value }}.png"  alt="{{ card.value }}" class="card" />
-        </ng-container>
-      </ng-container>
-    </td>
-    <td>
+  </tr>
+  <tr>
+    <td *ngFor="let player of whist.players">
       <img *ngIf="player.cardPlayed as card" src="assets/{{ card }}.png"  alt="{{ card }}" class="card" />
+    </td>
+  </tr>
+  <tr>
+    <td *ngFor="let player of whist.players">
       <ng-container *ngIf="player.bonusUsed == 'DISTRIBUTION'">
         <p>Je distribue</p>
       </ng-container>
@@ -74,10 +47,43 @@
         <p>Je laisse</p>
       </ng-container>
     </td>
-    <td>
-      <ng-container *ngIf="player.hasToPickAWinner">
-        On attend...
-      </ng-container>
-    </td>
   </tr>
 </table>
+
+<ng-container *ngFor="let player of whist.players">
+  <ng-container *ngIf="player.isConnectedPlayer">
+    <div style="text-align: center;">
+      <div>
+
+      </div>
+      <ng-container *ngFor="let card of player.cards">
+        <ng-container *ngIf="player.isNextToPlay">
+          <img src="assets/{{ card.value }}.png"
+               alt="{{ card.value }}"
+               class="card"
+               (click)="play(card)"
+               style="cursor: pointer"
+          />
+        </ng-container>
+        <ng-container *ngIf="!player.isNextToPlay">
+          <img src="assets/{{ card.value }}.png"
+               alt="{{ card.value }}"
+               class="card"
+          />
+        </ng-container>
+      </ng-container>
+      <div>
+        <ng-container *ngIf="player.isNextToTalk">
+            <div style="text-align: center">
+              <mat-form-field appearance="fill">
+                <input type="number" matInput  [(ngModel)]="contract" required>
+              </mat-form-field>
+            </div>
+            <div style="text-align: center">
+              <button mat-raised-button (click)="talk(contract)">Parler</button>
+            </div>
+          </ng-container>
+      </div>
+    </div>
+  </ng-container>
+</ng-container>
