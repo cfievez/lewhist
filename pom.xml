@@ -4,13 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.fievez</groupId>
-    <artifactId>fake-whist</artifactId>
+    <artifactId>le-whist</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
-        <module>front</module>
-        <module>fake-whist-webapp</module>
+        <module>le-whist-front</module>
+        <module>le-whist-webapp</module>
     </modules>
 
     <properties>

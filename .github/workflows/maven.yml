@@ -10,7 +10,20 @@ on:
     branches: [ master ]
 
 jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Compile
+      - uses: actions/checkout@v2
+      - run: mvn -B compile
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run java tests
+      - uses: actions/checkout@v2
+      - run: mvn -pl le-whist-webapp test
   build:
+    needs: compile
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -19,7 +32,7 @@ jobs:
       with:
         java-version: 1.8
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn -B package
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -34,4 +47,4 @@ jobs:
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       run: |
         mvn -B -DskipTests install
-        mvn -B -DskipTests -pl fake-whist-webapp heroku:deploy
+        mvn -B -DskipTests -pl le-whist-webapp heroku:deploy
