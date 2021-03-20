@@ -13,15 +13,17 @@ jobs:
   compile:
     runs-on: ubuntu-latest
     steps:
-      - name: Compile
       - uses: actions/checkout@v2
-      - run: mvn -B compile
+      - name: Compile
+        uses: actions/setup-java@v1
+        run: mvn -B compile
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Run java tests
       - uses: actions/checkout@v2
-      - run: mvn -pl le-whist-webapp test
+      - name: Run java tests
+        uses: actions/setup-java@v1
+        run: mvn -pl le-whist-webapp test
   build:
     needs: compile
     runs-on: ubuntu-latest
