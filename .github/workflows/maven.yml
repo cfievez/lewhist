@@ -21,6 +21,7 @@ jobs:
       - name: Compile
         run: mvn -B compile
   test:
+    needs: compile
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -29,9 +30,9 @@ jobs:
         with:
           java-version: 1.8
       - name: Run java tests
-        run: mvn -pl le-whist-webapp test
+        run: mvn -B test
   build:
-    needs: compile
+    needs: test
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -40,7 +41,7 @@ jobs:
       with:
         java-version: 1.8
     - name: Build with Maven
-      run: mvn -B package
+      run: mvn -DskipTests -B package
   deploy:
     needs: build
     runs-on: ubuntu-latest
