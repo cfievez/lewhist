@@ -6,10 +6,18 @@ public class Card {
 	private final int value;
 
 	private Bonus bonus;
+	private boolean trumpSuit;
 
 	public Card(Suit suit, int value) {
 		this.suit = suit;
 		this.value = value;
+		this.trumpSuit = false;
+	}
+
+	public Card(Suit suit, int value, boolean trumpSuit) {
+		this.suit = suit;
+		this.value = value;
+		this.trumpSuit = trumpSuit;
 	}
 
 	public void setBonus(Bonus bonus) throws Exception {
@@ -46,11 +54,16 @@ public class Card {
 		return value == 2 && Bonus.I_DISTRIBUTE.equals(bonus);
 	}
 
-	public static Card fromString(String code) throws Exception {
+	public static Card fromString(Suit trumpSuit, String code) throws Exception {
 		if(code.equals("joker")) {
 			return new Card(Suit.JOKER, 0);
 		} else {
-			return new Card(parseSuit(code), parseValue(code));
+			Suit suit = parseSuit(code);
+			if (suit.equals(trumpSuit)) {
+				return new Card(suit, parseTrumpValue(code), true);
+			} else {
+				return new Card(suit, parseValue(code));
+			}
 		}
 
 	}
@@ -71,14 +84,18 @@ public class Card {
 
 	private static int parseValue(String code) {
 		if(code.length() == 3) {
-			return Integer.parseInt(code.substring(0, 2));
+			int parseInt = Integer.parseInt(code.substring(0, 2));
+			if (parseInt == 10){
+				return 13;
+			}
+			return parseInt;
 		} else {
 			if(code.charAt(0) == 'J') {
-				return 11;
+				return 10;
 			} else if(code.charAt(0) == 'Q') {
-				return 12;
+				return 11;
 			} else if(code.charAt(0) == 'K') {
-				return 13;
+				return 12;
 			} else if(code.charAt(0) == 'A') {
 				return 14;
 			} else {
@@ -87,19 +104,66 @@ public class Card {
 		}
 	}
 
+	private static int parseTrumpValue(String code) {
+		if(code.length() == 3) {
+			int parseInt = Integer.parseInt(code.substring(0, 2));
+			 if (parseInt == 10){
+				return 11;
+			}
+			return parseInt;
+		} else {
+			if(code.charAt(0) == 'Q') {
+				return 9;
+			} else if(code.charAt(0) == 'K') {
+				return 10;
+			} else if(code.charAt(0) == 'A') {
+				return 12;
+			} else if(code.charAt(0) == 'J') {
+				return 14;
+			} else {
+				int parseInt = Integer.parseInt(code.substring(0, 1));
+				if (parseInt == 9){
+					return 13;
+				}
+				return parseInt;
+			}
+		}
+	}
+
 	@Override
 	public String toString() {
 		String assetName = "";
-		if(value <= 10 ) {
-			assetName += value ;
-		} else if (value == 11) {
-			assetName += "J";
-		} else if (value == 12) {
-			assetName += "Q";
-		} else if (value == 13) {
-			assetName += "K";
-		} else if (value == 14) {
-			assetName += "A";
+
+		if(this.trumpSuit) {
+			if(value <= 8 ) {
+				assetName += value ;
+			} else if (value == 9) {
+				assetName += "Q";
+			} else if (value == 10) {
+				assetName += "K";
+			} else if (value == 11) {
+				assetName += "10";
+			} else if (value == 12) {
+				assetName += "A";
+			} else if (value == 13) {
+				assetName += "9";
+			} else if (value == 14) {
+				assetName += "J";
+			}
+		} else {
+			if(value <= 9 ) {
+				assetName += value ;
+			} else if (value == 10) {
+				assetName += "J";
+			} else if (value == 11) {
+				assetName += "Q";
+			} else if (value == 12) {
+				assetName += "K";
+			} else if (value == 13) {
+				assetName += "10";
+			} else if (value == 14) {
+				assetName += "A";
+			}
 		}
 
 		switch (suit) {
