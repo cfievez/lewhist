@@ -167,12 +167,14 @@ public class Whist {
 		increaseTalkerIndex();
 	}
 
-	public void playCard(String username, Card card) throws Exception {
-		playCard(username, card, null);
+	public void playCard(String username, String cardStr) throws Exception {
+		playCard(username, cardStr, null);
 	}
 
-	public void playCard(String username, Card card, Card.Bonus bonus) throws Exception {
-		logger.info("{} is trying to play {}", username, card);
+	public void playCard(String username, String cardStr, Card.Bonus bonus) throws Exception {
+		logger.info("{} is trying to play {}", username, cardStr);
+
+		Card card = Card.fromString(this.trump.getSuit(), cardStr);
 
 		if(!phase.equals(GamePhase.PLAY)) {
 			throw new Exception("C'est pas le moment de jouer");

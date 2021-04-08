@@ -89,7 +89,7 @@ class WhistTest {
 		Whist whist = getWhistInPlayingPhase(6);
 
 		assertThrows(Exception.class, () -> {
-			whist.playCard("playerB", new Card(Card.Suit.CLUB, 8));
+			whist.playCard("playerB", new Card(Card.Suit.CLUB, 8).toString());
 		});
 
 	}

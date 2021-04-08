@@ -115,9 +115,9 @@ public class MainController {
 					 @RequestParam(required = false) Card.Bonus bonus) throws Exception {
 		String username = getConnectedUsernameOrThrowException(request);
 		if(bonus != null) {
-			globalSession.whist.playCard(username, Card.fromString(card), bonus);
+			globalSession.whist.playCard(username, card, bonus);
 		} else {
-			globalSession.whist.playCard(username, Card.fromString(card));
+			globalSession.whist.playCard(username, card);
 		}
 		refreshViewByWebSocket();
 
