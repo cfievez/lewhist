@@ -45,6 +45,7 @@ public class Whist {
 		generateDeck();
 		resetHands();
 		distributeCards();
+		pickTrump();
 		tricks.add(new Trick(trump, trumpPlayed, playersPlaying.size()));
 	}
 
@@ -55,8 +56,12 @@ public class Whist {
 				player.addCard(card);
 			}
 		}
+	}
+
+	private void pickTrump() {
 		do {
 			trump = pickACardFromDeck();
+			trump.setHasTrumpSuit();
 		} while (trump.getSuit().equals(Card.Suit.JOKER));
 
 		for (Player player : playersPlaying) {
