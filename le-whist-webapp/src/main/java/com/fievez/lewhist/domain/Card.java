@@ -46,6 +46,10 @@ public class Card {
 		return value;
 	}
 
+	public void setHasTrumpSuit(){
+		this.trumpSuit = true;
+	}
+
 	public boolean isTakingJoker() {
 		return suit.equals(Suit.JOKER) && Bonus.I_TAKE.equals(bonus);
 	}

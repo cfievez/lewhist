@@ -58,6 +58,14 @@ public class Whist {
 		do {
 			trump = pickACardFromDeck();
 		} while (trump.getSuit().equals(Card.Suit.JOKER));
+
+		for (Player player : playersPlaying) {
+			for (Card card : player.getCards()) {
+				if(card.getSuit().equals(trump.getSuit())){
+					card.setHasTrumpSuit();
+				}
+			}
+		}
 	}
 
 	private void resetHands() {
