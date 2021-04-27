@@ -12,4 +12,8 @@ export interface WhistApiDto {
 
   gameIsOver: boolean;
 
+  handSize: number;
+
+  totalSaid: number;
+
 }

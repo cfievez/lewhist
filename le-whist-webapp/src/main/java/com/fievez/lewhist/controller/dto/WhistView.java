@@ -17,6 +17,10 @@ public class WhistView {
 
 	public boolean gameIsOver;
 
+	public int handSize;
+
+	public int totalSaid;
+
 	public static WhistView from(com.fievez.lewhist.domain.Whist whist) {
 		return from(whist, "");
 	}
@@ -36,6 +40,8 @@ public class WhistView {
 				.map(Player::hasToPickAWinner)
 				.orElse(false);
 		whistView.gameIsOver = whist.gameIsOver();
+		whistView.handSize = whist.getHandSize();
+		whistView.totalSaid = whist.totalSaid();
 		return whistView;
 	}
 

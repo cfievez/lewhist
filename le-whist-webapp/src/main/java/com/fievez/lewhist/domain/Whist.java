@@ -367,6 +367,15 @@ public class Whist {
 		return firstToPlayCurrentTrick != null && firstToPlayCurrentTrick.getName().equals(playerName);
 	}
 
+	public int getHandSize() {
+		return handSize;
+	}
+
+	public int totalSaid() {
+		return this.playersPlaying.stream().mapToInt(value -> value.getContract().orElse(0)).sum();
+	}
+
+
 	public enum GamePhase {
 
 		WAITING,
